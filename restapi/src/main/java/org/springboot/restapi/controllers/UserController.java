@@ -21,7 +21,7 @@ public class UserController {
         }
 
         // Process the valid input
-        return ResponseEntity.ok("org.springboot.restapi.models.User input is valid!");
+        return ResponseEntity.ok(" input is valid!");
     }
 
 }

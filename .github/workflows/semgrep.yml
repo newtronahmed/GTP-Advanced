@@ -26,4 +26,4 @@ jobs:
         run: pip install semgrep
 
       - name: Run Semgrep
-        run: semgrep --config "p/owasp-top-ten" . --verbose
+        run: semgrep --config "p/owasp-top-ten" --config "p/sensitive-data-exposure" . --verbose
