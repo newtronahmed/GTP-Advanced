@@ -20,6 +20,5 @@ public class UserDTO {
     @Min(value = 18, message = "Age should be at least 18")
     private int age;
 
-
     // Getters and setters
 }
