@@ -1,19 +1,38 @@
 package org.springboot.restapi.controllers;
 
-import org.apache.commons.text.StringEscapeUtils;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+import org.springboot.restapi.models.Comment;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Controller
 public class CommentController {
 
-    @PostMapping("/api/encode")
-    public ResponseEntity<String> encodeOutput(@RequestBody String comment) {
-        // Encode the comment to prevent XSS
-        String safeComment = StringEscapeUtils.escapeHtml4(comment);
+    private List<Comment> comments = new ArrayList<>();
 
-        return ResponseEntity.ok(safeComment);
+    @GetMapping("/comments")
+    public String showCommentPage(Model model) {
+        model.addAttribute("comments", comments);
+        return "comment";
+    }
+
+    @PostMapping("/comments")
+    public String addComment(@RequestParam("author") String author,
+                             @RequestParam("content") String content,
+                             Model model) {
+        Comment comment = new Comment();
+//        comment.setAuthor(author);
+        comment.setContent(content);
+
+        comments.add(comment);
+        model.addAttribute("comments", comments);
+
+        return "comment";
     }
 }
