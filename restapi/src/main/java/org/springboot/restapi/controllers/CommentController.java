@@ -1,38 +1,54 @@
 package org.springboot.restapi.controllers;
 
-
+import org.springboot.restapi.dto.CommentDTO;
 import org.springboot.restapi.models.Comment;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springboot.restapi.models.User;
+import org.springboot.restapi.services.AuthService;
+import org.springboot.restapi.services.CommentService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@Controller
+
+import jakarta.validation.Valid;
+
+@RestController
+@RequestMapping("/api/comments")
 public class CommentController {
 
-    private List<Comment> comments = new ArrayList<>();
+    private final CommentService commentService;
+    private final AuthService authService;
 
-    @GetMapping("/comments")
-    public String showCommentPage(Model model) {
-        model.addAttribute("comments", comments);
-        return "comment";
+    @Autowired
+    public CommentController(CommentService commentService, AuthService authService) {
+        this.commentService = commentService;
+        this.authService = authService;
     }
 
-    @PostMapping("/comments")
-    public String addComment(@RequestParam("author") String author,
-                             @RequestParam("content") String content,
-                             Model model) {
-        Comment comment = new Comment();
-//        comment.setAuthor(author);
-        comment.setContent(content);
+    @PostMapping
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<CommentDTO> createComment(@Valid @RequestBody CommentDTO commentDTO) {
+        User currentUser = authService.getCurrentUser();
+        CommentDTO savedComment = commentService.createComment(commentDTO, currentUser);
+        return ResponseEntity.ok(savedComment);
+    }
 
-        comments.add(comment);
-        model.addAttribute("comments", comments);
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER') and @authService.isCommentOwner(#id, authentication.name)")
+    public ResponseEntity<CommentDTO> updateComment(@PathVariable Long id, @Valid @RequestBody Comment comment) {
+        User currentUser = authService.getCurrentUser();
+        CommentDTO updatedComment = commentService.updateComment(id, comment, currentUser);
+        return ResponseEntity.ok(updatedComment);
+    }
 
-        return "comment";
+    @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<CommentDTO>> getAllComments() {
+
+        List<CommentDTO> comments = commentService.getAllComments();
+        return ResponseEntity.ok(comments);
     }
 }
