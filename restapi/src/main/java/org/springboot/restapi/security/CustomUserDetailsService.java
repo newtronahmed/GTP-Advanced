@@ -26,6 +26,5 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .withUsername(user.getUsername())
                 .password(user.getPassword())
                 .authorities(user.getRole()) // Use authorities to set roles
-//                .roles("USER") // You can set roles based on your requirement
                 .build();    }
 }

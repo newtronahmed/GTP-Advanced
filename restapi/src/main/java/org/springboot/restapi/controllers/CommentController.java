@@ -47,7 +47,6 @@ public class CommentController {
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<CommentDTO>> getAllComments() {
-
         List<CommentDTO> comments = commentService.getAllComments();
         return ResponseEntity.ok(comments);
     }
