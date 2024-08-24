@@ -22,12 +22,12 @@ public class WebSecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                        .exceptionHandling(exception -> exception
-                                .authenticationEntryPoint(customAuthenticationEntryPoint)
-                        )
 
                 .authorizeHttpRequests(authz -> authz
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(customAuthenticationEntryPoint)
                 )
                 .httpBasic(Customizer.withDefaults())
                 .logout(logout -> logout.permitAll());
