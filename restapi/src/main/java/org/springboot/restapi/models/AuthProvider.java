@@ -24,4 +24,7 @@ public class AuthProvider {
         this.providerId = providerId;
         this.email = email;
     }
+    public AuthProvider() {
+        // Default constructor required by JPA and for serialization
+    }
 }

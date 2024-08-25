@@ -3,7 +3,8 @@ package org.springboot.restapi.config;
 import org.springboot.restapi.exceptions.CustomAuthenticationEntryPoint;
 import org.springboot.restapi.security.JwtAuthenticationFilter;
 import org.springboot.restapi.security.oauth.OAuth2AuthenticationSuccessHandler;
-import org.springboot.restapi.services.CustomOAuth2UserService;
+//import org.springboot.restapi.services.CustomOAuth2UserService;
+import org.springboot.restapi.services.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,7 +37,7 @@ public class WebSecurityConfig {
     private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOidcUserService customOidcUserService) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
 
@@ -56,7 +57,7 @@ public class WebSecurityConfig {
                 .oauth2Login(oauth2 -> oauth2
                         .loginPage("/auth/oauth2-login")
                         .userInfoEndpoint(userInfo -> userInfo
-                                .userService(customOAuth2UserService())
+                                .oidcUserService(customOidcUserService)
                         )
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
@@ -72,8 +73,8 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-    @Bean
-    public CustomOAuth2UserService customOAuth2UserService() {
-        return new CustomOAuth2UserService();
-    }
+//    @Bean
+//    public CustomOidcUserService customOAuth2UserService() {
+//        return new CustomOidcUserService();
+//    }
 }

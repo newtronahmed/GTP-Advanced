@@ -38,6 +38,8 @@ public class JwtTokenProvider {
         } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
             DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
             username = oidcUser.getEmail(); // Assuming email is the unique identifier
+            System.out.println(authentication.getPrincipal().getClass());
+            System.out.println(authentication.getPrincipal());
         } else {
             throw new IllegalArgumentException("Unsupported principal type: " + authentication.getPrincipal().getClass());
         }
