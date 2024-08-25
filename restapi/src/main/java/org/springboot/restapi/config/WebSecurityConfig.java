@@ -2,6 +2,8 @@ package org.springboot.restapi.config;
 
 import org.springboot.restapi.exceptions.CustomAuthenticationEntryPoint;
 import org.springboot.restapi.security.JwtAuthenticationFilter;
+import org.springboot.restapi.security.oauth.OAuth2AuthenticationSuccessHandler;
+import org.springboot.restapi.services.CustomOAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
@@ -28,13 +31,18 @@ public class WebSecurityConfig {
 
     @Autowired
     private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    @Autowired
+    private OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/auth/**").permitAll()
+                        .requestMatchers("/").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
@@ -45,12 +53,17 @@ public class WebSecurityConfig {
                 )
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/auth/oauth2-login")
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService())
+                        )
+                        .successHandler(oAuth2AuthenticationSuccessHandler)
+                )
                 .logout(logout -> logout.permitAll());
 
         return http.build();
     }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -58,5 +71,9 @@ public class WebSecurityConfig {
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
+    }
+    @Bean
+    public CustomOAuth2UserService customOAuth2UserService() {
+        return new CustomOAuth2UserService();
     }
 }

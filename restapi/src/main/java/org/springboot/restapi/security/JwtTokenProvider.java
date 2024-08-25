@@ -7,6 +7,7 @@ import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.StandardCharsets;
@@ -27,19 +28,44 @@ public class JwtTokenProvider {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
-
     public String generateToken(Authentication authentication) {
-        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+        String username;
+
+        // Check if the user is logging in via OAuth2 (Google) or standard authentication
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+            username = userPrincipal.getUsername();
+        } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
+            DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
+            username = oidcUser.getEmail(); // Assuming email is the unique identifier
+        } else {
+            throw new IllegalArgumentException("Unsupported principal type: " + authentication.getPrincipal().getClass());
+        }
+
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
+                .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
+
+
+//    public String generateToken(Authentication authentication) {
+//        UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
+//        Date now = new Date();
+//        Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
+//
+//        return Jwts.builder()
+//                .setSubject(userPrincipal.getUsername())
+//                .setIssuedAt(new Date())
+//                .setExpiration(expiryDate)
+//                .signWith(getSigningKey(), SignatureAlgorithm.HS512)
+//                .compact();
+//    }
 
     public Long getUserIdFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()

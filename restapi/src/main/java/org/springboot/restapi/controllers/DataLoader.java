@@ -19,9 +19,9 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         // Seed database with initial data
         if (userRepository.count() == 0) {
-            userRepository.save(new User("admin", passwordEncoder.encode("adminpassword"), "admin@example.com", "ROLE_ADMIN"));
+            userRepository.save(new User("admin", passwordEncoder.encode("adminpassword"), "devahmed365@gmail.com", "ROLE_ADMIN"));
 
-            userRepository.save(new User("user1", passwordEncoder.encode("password1"), "user1@example.com", "ROLE_USER"));
+            userRepository.save(new User("user1", passwordEncoder.encode("password1"), "hmedzubairu365@gmail.com", "ROLE_USER"));
         }
     }
 }
