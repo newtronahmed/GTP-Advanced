@@ -1,4 +1,5 @@
 application-dev.properties
+src/main/resources/localhost.*
 certs
 HELP.md
 target/

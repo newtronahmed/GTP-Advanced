@@ -34,9 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
                 System.out.println("Username from JWT: " + username);
 
-//                User userDetails = customUserDetailsService.loadUserEntityByUsername(username);
-//                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getRoles().stream().map(role -> new org.springframework.security.core.authority.SimpleGrantedAuthority(role.name())).toList());
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
                 if (userDetails != null) {
                     UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
