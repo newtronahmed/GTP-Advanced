@@ -18,8 +18,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                                         Authentication authentication) throws IOException {
         // Generate JWT and redirect or return it in the response
         String jwt = tokenProvider.generateToken(authentication);
-        // Example: redirect to your frontend with the JWT token as a query parameter
-//        String jwt = "your_jwt_token_here"; // Replace with actual JWT generation logic
         response.sendRedirect("/success?token=" + jwt);
     }
 }

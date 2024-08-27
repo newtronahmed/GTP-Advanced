@@ -10,10 +10,7 @@ public class HomeController {
     public String home() {
         return "home";
     }
-//    @GetMapping("/authenticated")
-//    public String home() {
-//        return "";
-//    }
+
 @GetMapping("/auth/oauth2-login")
 public String login() {
     return "login";

@@ -14,6 +14,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomOidcUserService customOidcUserService) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
 
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/auth/**", "/auth/**").permitAll()
@@ -61,7 +63,7 @@ public class WebSecurityConfig {
                         )
                         .successHandler(oAuth2AuthenticationSuccessHandler)
                 )
-                .logout(logout -> logout.permitAll());
+                .logout(LogoutConfigurer::permitAll);
 
         return http.build();
     }
@@ -73,8 +75,4 @@ public class WebSecurityConfig {
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
     }
-//    @Bean
-//    public CustomOidcUserService customOAuth2UserService() {
-//        return new CustomOidcUserService();
-//    }
 }
