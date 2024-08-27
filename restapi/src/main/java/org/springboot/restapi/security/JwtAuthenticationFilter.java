@@ -27,11 +27,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String jwt = getJwtFromRequest(request);
-            System.out.println("Extracted JWT: " + jwt);
+//            System.out.println("Extracted JWT: " + jwt);
 
             if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
-                System.out.println("Username from JWT: " + username);
+//                System.out.println("Username from JWT: " + username);
 
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
                 if (userDetails != null) {
