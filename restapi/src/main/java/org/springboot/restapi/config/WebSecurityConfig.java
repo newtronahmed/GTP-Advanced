@@ -3,7 +3,6 @@ package org.springboot.restapi.config;
 import org.springboot.restapi.exceptions.CustomAuthenticationEntryPoint;
 import org.springboot.restapi.security.JwtAuthenticationFilter;
 import org.springboot.restapi.security.oauth.OAuth2AuthenticationSuccessHandler;
-//import org.springboot.restapi.services.CustomOAuth2UserService;
 import org.springboot.restapi.services.CustomOidcUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +18,7 @@ import org.springframework.security.config.annotation.web.configurers.LogoutConf
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
+//import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
