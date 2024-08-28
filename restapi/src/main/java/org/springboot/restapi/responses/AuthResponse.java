@@ -1,4 +1,4 @@
-package org.springboot.restapi.dto;
+package org.springboot.restapi.responses;
 
 import lombok.Getter;
 import lombok.Setter;

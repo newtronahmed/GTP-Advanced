@@ -1,7 +1,7 @@
 package org.springboot.restapi.controllers;
 
-import org.springboot.restapi.dto.AuthResponse;
-import org.springboot.restapi.dto.LoginRequest;
+import org.springboot.restapi.responses.AuthResponse;
+import org.springboot.restapi.requests.LoginRequest;
 import org.springboot.restapi.models.User;
 import org.springboot.restapi.security.JwtTokenProvider;
 import org.springboot.restapi.services.AuthService;
@@ -59,32 +59,3 @@ public class AuthController {
     }
 }
 
-//    @PostMapping("/signup")
-//    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpRequest signUpRequest) {
-//        if (userService.existsByUsername(signUpRequest.getUsername())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new ApiResponse(false, "Username is already taken!"));
-//        }
-//
-//        if (userService.existsByEmail(signUpRequest.getEmail())) {
-//            return ResponseEntity
-//                    .badRequest()
-//                    .body(new ApiResponse(false, "Email Address already in use!"));
-//        }
-//
-//        // Creating user's account
-//        User user = new User();
-//        user.setUsername(signUpRequest.getUsername());
-//        user.setEmail(signUpRequest.getEmail());
-//        user.setPassword(signUpRequest.getPassword());
-//        user.setRoles(Set.of(Role.valueOf(signUpRequest.getRole().toUpperCase())));
-//
-//        User result = userService.registerUser(user);
-//
-//        URI location = ServletUriComponentsBuilder
-//                .fromCurrentContextPath().path("/api/users/{username}")
-//                .buildAndExpand(result.getUsername()).toUri();
-//
-//        return ResponseEntity.created(location).body(new ApiResponse(true, "User registered successfully"));
-//    }}
