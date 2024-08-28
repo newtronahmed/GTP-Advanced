@@ -32,7 +32,7 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-        // Check if the login is via email or username
+
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();
 
