@@ -1,11 +1,13 @@
 package org.springboot.hms.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springboot.hms.models.Department;
 import org.springboot.hms.models.Patient;
 
 import java.util.List;
 
+@Data
 @Entity
 public class Ward {
 
