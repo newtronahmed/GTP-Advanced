@@ -1,9 +1,9 @@
 package org.springboot.restapi.security;
 
-
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,44 +17,28 @@ import java.util.Date;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final String jwtSecret;
+    private final int jwtExpirationInMs;
 
-    @Getter
-    @Value("${jwt.expiration}")
-    private int jwtExpirationInMs;
-
-    private Key getSigningKey() {
-        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+    public JwtTokenProvider(
+            @Value("${jwt.secret}") String jwtSecret,
+            @Value("${jwt.expiration}") int jwtExpirationInMs) {
+        this.jwtSecret = jwtSecret;
+        this.jwtExpirationInMs = jwtExpirationInMs;
     }
+
     public String generateToken(Authentication authentication) {
-        String username;
-
-        // Check if the user is logging in via OAuth2 (Google) or standard authentication
-        if (authentication.getPrincipal() instanceof UserDetails) {
-            UserDetails userPrincipal = (UserDetails) authentication.getPrincipal();
-            username = userPrincipal.getUsername();
-        } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
-            DefaultOidcUser oidcUser = (DefaultOidcUser) authentication.getPrincipal();
-            username = oidcUser.getEmail(); // Assuming email is the unique identifier
-            System.out.println(authentication.getPrincipal().getClass());
-            System.out.println(authentication.getPrincipal());
-        } else {
-            throw new IllegalArgumentException("Unsupported principal type: " + authentication.getPrincipal().getClass());
-        }
-
+        String username = extractUsername(authentication);
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         return Jwts.builder()
                 .setSubject(username)
-                .setIssuedAt(new Date())
+                .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS512)
                 .compact();
     }
-
 
     public boolean validateToken(String authToken) {
         try {
@@ -64,9 +48,10 @@ public class JwtTokenProvider {
                     .parseClaimsJws(authToken);
             return true;
         } catch (Exception ex) {
-            System.out.println("Token validation failed: " + ex.getMessage());
+            // Consider using a logger instead of System.out.println
+            // log.error("Token validation failed: {}", ex.getMessage());
+            return false;
         }
-        return false;
     }
 
     public String getUsernameFromJWT(String token) {
@@ -77,5 +62,19 @@ public class JwtTokenProvider {
                 .getBody();
 
         return claims.getSubject();
+    }
+
+    private Key getSigningKey() {
+        byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
+        return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    private String extractUsername(Authentication authentication) {
+        if (authentication.getPrincipal() instanceof UserDetails) {
+            return ((UserDetails) authentication.getPrincipal()).getUsername();
+        } else if (authentication.getPrincipal() instanceof DefaultOidcUser) {
+            return ((DefaultOidcUser) authentication.getPrincipal()).getEmail();
+        }
+        throw new IllegalArgumentException("Unsupported principal type: " + authentication.getPrincipal().getClass());
     }
 }
