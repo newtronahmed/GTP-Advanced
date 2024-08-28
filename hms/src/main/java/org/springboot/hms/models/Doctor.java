@@ -7,5 +7,6 @@ public class Doctor extends Employee {
 
     private String speciality;
 
+
     // Getters and Setters
 }

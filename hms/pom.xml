@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>org.springboot</groupId>
-    <artifactId>hms</artifactId>
+    <artifactId>hospitalInformationSystem</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>hms</name>

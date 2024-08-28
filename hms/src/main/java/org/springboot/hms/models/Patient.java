@@ -1,9 +1,11 @@
 package org.springboot.hms.models;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.springboot.hms.models.Doctor;
 import org.springboot.hms.models.Ward;
 
+@Data
 @Entity
 public class Patient {
 
