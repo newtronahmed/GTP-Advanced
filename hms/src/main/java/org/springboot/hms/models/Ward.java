@@ -29,8 +29,10 @@ public class Ward {
     @JoinColumn(name = "department_id")
     private Department department;
 
-    @OneToMany(mappedBy = "currentWard", cascade = CascadeType.ALL)
-    private List<Patient> patients;
+//    @OneToMany(mappedBy = "currentWard", cascade = CascadeType.ALL)
+//    private List<Patient> patients;
+    @OneToMany(mappedBy = "ward")
+    private List<Hospitalization> hospitalizations;
 
     // Getters and Setters
 }

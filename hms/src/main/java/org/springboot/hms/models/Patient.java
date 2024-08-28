@@ -5,6 +5,8 @@ import lombok.Data;
 import org.springboot.hms.models.Doctor;
 import org.springboot.hms.models.Ward;
 
+import java.util.List;
+
 @Data
 @Entity
 public class Patient {
@@ -26,17 +28,20 @@ public class Patient {
 
     private String phoneNumber;
 
-    @ManyToOne
-    @JoinColumn(name = "ward_id")
-    private Ward currentWard;
+//    @ManyToOne
+//    @JoinColumn(name = "ward_id")
+//    private Ward currentWard;
+//
+//    private int currentBedNumber;
+//
+//    private String diagnosis;
 
-    private int currentBedNumber;
+//    @ManyToOne
+//    @JoinColumn(name = "doctor_id")
+//    private Doctor attendingDoctor;
 
-    private String diagnosis;
-
-    @ManyToOne
-    @JoinColumn(name = "doctor_id")
-    private Doctor attendingDoctor;
+    @OneToMany(mappedBy = "patient")
+    private List<Hospitalization> hospitalizations;
 
     // Getters and Setters
 }

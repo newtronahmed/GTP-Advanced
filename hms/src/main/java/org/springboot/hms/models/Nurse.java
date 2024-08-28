@@ -18,6 +18,16 @@ public class Nurse extends Employee {
     @ManyToOne
     @JoinColumn(name = "department_id")
     private Department assignedDepartment;
+    @Id
+    private Long id;
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getId() {
+        return id;
+    }
 
     // Getters and Setters
 }

@@ -42,10 +42,10 @@ public class PatientController {
                     patient.setFirstName(patientDetails.getFirstName());
                     patient.setAddress(patientDetails.getAddress());
                     patient.setPhoneNumber(patientDetails.getPhoneNumber());
-                    patient.setCurrentWard(patientDetails.getCurrentWard());
-                    patient.setCurrentBedNumber(patientDetails.getCurrentBedNumber());
-                    patient.setDiagnosis(patientDetails.getDiagnosis());
-                    patient.setAttendingDoctor(patientDetails.getAttendingDoctor());
+//                    patient.setCurrentWard(patientDetails.getCurrentWard());
+//                    patient.setCurrentBedNumber(patientDetails.getCurrentBedNumber());
+//                    patient.setDiagnosis(patientDetails.getDiagnosis());
+//                    patient.setAttendingDoctor(patientDetails.getAttendingDoctor());
                     return ResponseEntity.ok(patientService.savePatient(patient));
                 })
                 .orElse(ResponseEntity.notFound().build());
