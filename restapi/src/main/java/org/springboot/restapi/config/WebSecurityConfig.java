@@ -2,7 +2,8 @@ package org.springboot.restapi.config;
 
 import org.springboot.restapi.exceptions.CustomAuthenticationEntryPoint;
 import org.springboot.restapi.security.JwtAuthenticationFilter;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springboot.restapi.security.JwtTokenProvider;
+import org.springboot.restapi.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,18 +24,28 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter();
+
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final CustomUserDetailsService customUserDetailsService;
+
+    public WebSecurityConfig(CustomAuthenticationEntryPoint customAuthenticationEntryPoint,
+                             JwtTokenProvider jwtTokenProvider,
+                             CustomUserDetailsService customUserDetailsService) {
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.customUserDetailsService = customUserDetailsService;
     }
 
-    @Autowired
-    private CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(jwtTokenProvider, customUserDetailsService);
+    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/api/auth/**").permitAll()
                         .anyRequest().authenticated()
@@ -47,7 +58,6 @@ public class WebSecurityConfig {
                 )
                 .httpBasic(Customizer.withDefaults())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-
                 .logout(LogoutConfigurer::permitAll);
 
         return http.build();
@@ -57,6 +67,7 @@ public class WebSecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
         return authConfig.getAuthenticationManager();
