@@ -1,6 +1,3 @@
-application-dev.properties
-cert.sh
-certs
 HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
