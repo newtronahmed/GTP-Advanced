@@ -2,10 +2,9 @@ package org.springboot.hms.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springboot.hms.models.Doctor;
-import org.springboot.hms.models.Ward;
 
 import java.util.List;
+
 @Data
 @Entity
 public class Department {
@@ -14,7 +13,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String code;
 
     @Column(nullable = false)
@@ -26,8 +25,6 @@ public class Department {
     @JoinColumn(name = "director_id")
     private Doctor director;
 
-    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Ward> wards;
-
-    // Getters and Setters
 }

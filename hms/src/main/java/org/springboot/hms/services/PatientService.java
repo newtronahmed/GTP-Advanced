@@ -30,4 +30,8 @@ public class PatientService {
     public void deletePatient(Long id) {
         patientRepository.deleteById(id);
     }
+    public List<Patient> getPatientsByWardNumberAndDepartmentCode(int wardNumber, String departmentCode) {
+        return patientRepository.findPatientsByWardNumberAndDepartmentCode(wardNumber, departmentCode);
+    }
+
 }

@@ -1,6 +1,9 @@
 package org.springboot.hms.controllers;
 
+import jakarta.validation.Valid;
 import org.springboot.hms.models.Hospitalization;
+import org.springboot.hms.requests.AdmitPatientRequest;
+import org.springboot.hms.requests.TransferPatientRequest;
 import org.springboot.hms.services.HospitalizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +31,14 @@ public class HospitalizationController {
     }
 
     @PostMapping("/admit")
-    public ResponseEntity<Hospitalization> admitPatient(
-            @RequestParam Long patientId,
-            @RequestParam Long wardId,
-            @RequestParam int bedNumber,
-            @RequestParam String diagnosis,
-            @RequestParam Long doctorId) {
-        Hospitalization hospitalization = hospitalizationService.admitPatient(patientId, wardId, bedNumber, diagnosis, doctorId);
+    public ResponseEntity<Hospitalization> admitPatient(@Valid @RequestBody AdmitPatientRequest admitPatientRequest) {
+        Hospitalization hospitalization = hospitalizationService.admitPatient(
+                admitPatientRequest.getPatientId(),
+                admitPatientRequest.getWardId(),
+                admitPatientRequest.getBedNumber(),
+                admitPatientRequest.getDiagnosis(),
+                admitPatientRequest.getDoctorId()
+        );
         return ResponseEntity.ok(hospitalization);
     }
 
@@ -47,9 +51,12 @@ public class HospitalizationController {
     @PutMapping("/{id}/transfer")
     public ResponseEntity<Hospitalization> transferPatient(
             @PathVariable Long id,
-            @RequestParam Long newWardId,
-            @RequestParam int newBedNumber) {
-        Hospitalization hospitalization = hospitalizationService.transferPatient(id, newWardId, newBedNumber);
+            @RequestBody TransferPatientRequest transferPatientRequest) {
+        Hospitalization hospitalization = hospitalizationService.transferPatient(
+                id,
+                transferPatientRequest.getNewWardId(),
+                transferPatientRequest.getNewBedNumber()
+        );
         return ResponseEntity.ok(hospitalization);
     }
 }

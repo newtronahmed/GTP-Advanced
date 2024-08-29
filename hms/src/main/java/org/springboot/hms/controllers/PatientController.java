@@ -42,13 +42,15 @@ public class PatientController {
                     patient.setFirstName(patientDetails.getFirstName());
                     patient.setAddress(patientDetails.getAddress());
                     patient.setPhoneNumber(patientDetails.getPhoneNumber());
-//                    patient.setCurrentWard(patientDetails.getCurrentWard());
-//                    patient.setCurrentBedNumber(patientDetails.getCurrentBedNumber());
-//                    patient.setDiagnosis(patientDetails.getDiagnosis());
-//                    patient.setAttendingDoctor(patientDetails.getAttendingDoctor());
                     return ResponseEntity.ok(patientService.savePatient(patient));
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+    @GetMapping("/by-ward-and-department")
+    public List<Patient> getPatientsByWardNumberAndDepartmentCode(
+            @RequestParam int wardNumber,
+            @RequestParam String departmentCode) {
+        return patientService.getPatientsByWardNumberAndDepartmentCode(wardNumber, departmentCode);
     }
 
     @DeleteMapping("/{id}")

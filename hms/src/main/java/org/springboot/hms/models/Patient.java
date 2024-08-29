@@ -1,5 +1,7 @@
 package org.springboot.hms.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.springboot.hms.models.Doctor;
@@ -28,19 +30,8 @@ public class Patient {
 
     private String phoneNumber;
 
-//    @ManyToOne
-//    @JoinColumn(name = "ward_id")
-//    private Ward currentWard;
-//
-//    private int currentBedNumber;
-//
-//    private String diagnosis;
-
-//    @ManyToOne
-//    @JoinColumn(name = "doctor_id")
-//    private Doctor attendingDoctor;
-
     @OneToMany(mappedBy = "patient")
+    @JsonBackReference
     private List<Hospitalization> hospitalizations;
 
     // Getters and Setters
