@@ -1,16 +1,18 @@
 package org.springboot.hms.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
-import org.springboot.hms.models.Doctor;
-import org.springboot.hms.models.Ward;
 
 import java.util.List;
 
 @Data
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Patient {
 
     @Id
@@ -31,7 +33,7 @@ public class Patient {
     private String phoneNumber;
 
     @OneToMany(mappedBy = "patient")
-    @JsonBackReference
+    @JsonIgnore
     private List<Hospitalization> hospitalizations;
 
     // Getters and Setters

@@ -1,7 +1,7 @@
 package org.springboot.hms.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +10,9 @@ import java.util.List;
 @Data
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"department_id", "number"})})
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Ward {
 
     @Id
@@ -31,6 +34,5 @@ public class Ward {
     private Department department;
 
     @OneToMany(mappedBy = "ward")
-    @JsonManagedReference
     private List<Hospitalization> hospitalizations;
 }

@@ -1,8 +1,8 @@
-
 package org.springboot.hms.models;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -10,6 +10,9 @@ import java.time.LocalDate;
 
 @Data
 @Entity
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Hospitalization {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,12 +20,11 @@ public class Hospitalization {
 
     @ManyToOne
     @JoinColumn(name = "patient_id", nullable = false)
-    @JsonManagedReference
     private Patient patient;
 
     @ManyToOne
     @JoinColumn(name = "ward_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnore
     private Ward ward;
 
     @Column(nullable = false)
@@ -32,7 +34,7 @@ public class Hospitalization {
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnore
     private Doctor doctor;
 
     @Column(nullable = false)
