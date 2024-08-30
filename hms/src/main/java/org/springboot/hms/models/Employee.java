@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Data
-
 @Inheritance(strategy = InheritanceType.JOINED)
 @Entity
 public class Employee {

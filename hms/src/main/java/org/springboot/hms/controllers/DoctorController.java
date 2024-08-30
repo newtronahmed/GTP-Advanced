@@ -1,6 +1,7 @@
 package org.springboot.hms.controllers;
 
 import org.springboot.hms.dto.DoctorDTO;
+import org.springboot.hms.exceptions.DoctorNotFoundException;
 import org.springboot.hms.models.Doctor;
 import org.springboot.hms.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class DoctorController {
     public ResponseEntity<Doctor> getDoctorById(@PathVariable Long id) {
         return doctorService.getDoctorById(id)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new DoctorNotFoundException(id));
     }
 
     @PostMapping
@@ -45,7 +46,7 @@ public class DoctorController {
                     doctor.setSpeciality(doctorDetails.getSpeciality());
                     return ResponseEntity.ok(doctorService.saveDoctor(doctor));
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new DoctorNotFoundException(id));
     }
 
     @DeleteMapping("/{id}")
@@ -55,6 +56,6 @@ public class DoctorController {
                     doctorService.deleteDoctor(id);
                     return ResponseEntity.ok().<Void>build();
                 })
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new DoctorNotFoundException(id));
     }
 }
