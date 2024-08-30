@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -29,9 +30,15 @@ public class HospitalizationService {
 
     @Autowired
     private WardRepository wardRepository;
+    @Autowired
+    private final TransactionTemplate transactionTemplate;
 
     @Autowired
     private DoctorRepository doctorRepository;
+
+    public HospitalizationService(TransactionTemplate transactionTemplate) {
+        this.transactionTemplate = transactionTemplate;
+    }
 
     @Cacheable(value = "hospitalizations", key = "#id")
     public Hospitalization getHospitalizationById(Long id) {
@@ -43,31 +50,45 @@ public class HospitalizationService {
         return hospitalizationRepository.findByPatientId(patientId);
     }
 
-    @Transactional
     @CacheEvict(value = {"hospitalizations", "patients", "wards"}, allEntries = true)
     public Hospitalization admitPatient(Long patientId, Long wardId, int bedNumber, String diagnosis, Long doctorId) {
-        Patient patient = patientRepository.findById(patientId)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
-        Ward ward = wardRepository.findById(wardId)
-                .orElseThrow(() -> new RuntimeException("Ward not found"));
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+        return transactionTemplate.execute(status -> {
+            try {
+                Patient patient = patientRepository.findById(patientId)
+                        .orElseThrow(() -> new RuntimeException("Patient not found"));
+                Ward ward = wardRepository.findById(wardId)
+                        .orElseThrow(() -> new RuntimeException("Ward not found"));
+                Doctor doctor = doctorRepository.findById(doctorId)
+                        .orElseThrow(() -> new RuntimeException("Doctor not found"));
 
-        if (bedNumber > ward.getNumberOfBeds()) {
-            throw new RuntimeException("Invalid bed number for the ward");
-        }
+                if (bedNumber > ward.getNumberOfBeds()) {
+                    throw new RuntimeException("Invalid bed number for the ward");
+                }
 
-        Hospitalization hospitalization = new Hospitalization();
-        hospitalization.setPatient(patient);
-        hospitalization.setWard(ward);
-        hospitalization.setBedNumber(bedNumber);
-        hospitalization.setDiagnosis(diagnosis);
-        hospitalization.setDoctor(doctor);
-        hospitalization.setAdmissionDate(LocalDate.now());
+                if (ward.getAvailableBeds() <= 0) {
+                    throw new RuntimeException("No available beds in the ward");
+                }
 
-        return hospitalizationRepository.save(hospitalization);
+                // Decrement available beds in the ward
+                ward.decrementAvailableBeds();
+                wardRepository.save(ward);  // Save the ward with updated available beds
+
+                Hospitalization hospitalization = new Hospitalization();
+                hospitalization.setPatient(patient);
+                hospitalization.setWard(ward);
+                hospitalization.setBedNumber(bedNumber);
+                hospitalization.setDiagnosis(diagnosis);
+                hospitalization.setDoctor(doctor);
+                hospitalization.setAdmissionDate(LocalDate.now());
+
+                return hospitalizationRepository.save(hospitalization);
+
+            } catch (RuntimeException ex) {
+                status.setRollbackOnly();
+                throw ex;
+            }
+        });
     }
-
     @Transactional
     @CacheEvict(value = {"hospitalizations", "patients", "wards"}, allEntries = true)
     public Hospitalization dischargePatient(Long hospitalizationId) {

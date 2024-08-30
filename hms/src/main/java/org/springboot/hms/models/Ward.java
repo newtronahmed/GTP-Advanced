@@ -25,6 +25,9 @@ public class Ward {
     @Column(nullable = false)
     private int numberOfBeds;
 
+    @Column(nullable = false)
+    private int availableBeds;
+
     @OneToOne
     @JoinColumn(name = "supervisor_id", unique = true)
     private Nurse supervisor;
@@ -35,4 +38,12 @@ public class Ward {
 
     @OneToMany(mappedBy = "ward")
     private List<Hospitalization> hospitalizations;
+
+    // Method to decrement available beds
+    public void decrementAvailableBeds() {
+        if (availableBeds <= 0) {
+            throw new RuntimeException("No available beds in the ward");
+        }
+        this.availableBeds -= 1;
+    }
 }
