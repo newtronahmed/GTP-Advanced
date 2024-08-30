@@ -31,6 +31,6 @@ public class Ward {
     private Department department;
 
     @OneToMany(mappedBy = "ward")
-    @JsonBackReference
+    @JsonManagedReference
     private List<Hospitalization> hospitalizations;
 }

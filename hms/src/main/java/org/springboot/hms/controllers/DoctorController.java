@@ -1,8 +1,6 @@
 package org.springboot.hms.controllers;
 
-
-
-
+import org.springboot.hms.dto.DoctorDTO;
 import org.springboot.hms.models.Doctor;
 import org.springboot.hms.services.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +29,8 @@ public class DoctorController {
     }
 
     @PostMapping
-    public Doctor createDoctor(@RequestBody Doctor doctor) {
-        return doctorService.saveDoctor(doctor);
+    public Doctor createDoctor(@RequestBody DoctorDTO doctorDTO) {
+        return doctorService.createDoctor(doctorDTO);
     }
 
     @PutMapping("/{id}")
