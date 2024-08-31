@@ -108,6 +108,8 @@ public class HospitalizationService {
     public Hospitalization transferPatient(Long hospitalizationId, Long newWardId, int newBedNumber) {
         Hospitalization hospitalization = hospitalizationRepository.findById(hospitalizationId)
                 .orElseThrow(() -> new RuntimeException("Hospitalization not found"));
+
+        Ward oldWard = hospitalization.getWard(); // Get the current ward
         Ward newWard = wardRepository.findById(newWardId)
                 .orElseThrow(() -> new RuntimeException("New ward not found"));
 
@@ -115,6 +117,19 @@ public class HospitalizationService {
             throw new RuntimeException("Invalid bed number for the new ward");
         }
 
+        if (newWard.getAvailableBeds() <= 0) {
+            throw new RuntimeException("No available beds in the new ward");
+        }
+
+        // Increment available beds in the old ward
+        oldWard.incrementAvailableBeds();
+        wardRepository.save(oldWard);
+
+        // Decrement available beds in the new ward
+        newWard.decrementAvailableBeds();
+        wardRepository.save(newWard);
+
+        // Update hospitalization details
         hospitalization.setWard(newWard);
         hospitalization.setBedNumber(newBedNumber);
 

@@ -1,5 +1,6 @@
 package org.springboot.hms.controllers;
 
+import org.springboot.hms.dto.WardDTO;
 import org.springboot.hms.models.Ward;
 import org.springboot.hms.services.WardService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,18 +29,24 @@ public class WardController {
     }
 
     @PostMapping
-    public Ward createWard(@RequestBody Ward ward) {
+    public Ward createWard(@RequestBody WardDTO wardDetails) {
+        Ward ward = new Ward();
+        ward.setNumber(wardDetails.getNumber());
+        ward.setNumberOfBeds(wardDetails.getNumberOfBeds());
+        ward.setDepartment(wardDetails.getDepartment());
+        ward.setAvailableBeds(wardDetails.getNumberOfBeds());
+
         return wardService.saveWard(ward);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Ward> updateWard(@PathVariable Long id, @RequestBody Ward wardDetails) {
+    public ResponseEntity<Ward> updateWard(@PathVariable Long id, @RequestBody WardDTO wardDetails) {
         return wardService.getWardById(id)
                 .map(ward -> {
                     ward.setNumber(wardDetails.getNumber());
                     ward.setNumberOfBeds(wardDetails.getNumberOfBeds());
-                    ward.setSupervisor(wardDetails.getSupervisor());
                     ward.setDepartment(wardDetails.getDepartment());
+                    ward.setAvailableBeds(wardDetails.getAvailableBeds());
                     return ResponseEntity.ok(wardService.saveWard(ward));
                 })
                 .orElse(ResponseEntity.notFound().build());

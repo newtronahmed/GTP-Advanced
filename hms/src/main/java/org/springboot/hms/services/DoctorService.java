@@ -45,15 +45,7 @@ public class DoctorService {
         return doctorRepository.save(doctor);
     }
 
-    // Update existing doctor details using DoctorDTO
-    public Doctor updateDoctor(Doctor doctor, DoctorDTO doctorDTO) {
-        doctor.setFirstName(doctorDTO.getFirstName());
-        doctor.setSurname(doctorDTO.getSurname());
-        doctor.setAddress(doctorDTO.getAddress());
-        doctor.setPhoneNumber(doctorDTO.getPhoneNumber());
-        doctor.setSpeciality(doctorDTO.getSpeciality());
-        return doctorRepository.save(doctor);
-    }
+
 
     public void deleteDoctor(Long id) {
         doctorRepository.deleteById(id);

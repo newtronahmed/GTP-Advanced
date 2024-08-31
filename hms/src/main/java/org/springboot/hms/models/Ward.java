@@ -4,11 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Cache;
 
 import java.util.List;
 
 @Data
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"department_id", "number"})})
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -46,4 +50,12 @@ public class Ward {
         }
         this.availableBeds -= 1;
     }
+    public void incrementAvailableBeds() {
+        if (this.availableBeds < this.numberOfBeds) {
+            this.availableBeds += 1;
+        } else {
+            throw new RuntimeException("All beds are already available");
+        }
+    }
+
 }

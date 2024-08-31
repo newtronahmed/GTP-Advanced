@@ -1,12 +1,16 @@
 package org.springboot.hms.models;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Cache;
 import lombok.Data;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 
 import java.util.List;
 
 @Data
 @Entity
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 public class Department {
 
     @Id
