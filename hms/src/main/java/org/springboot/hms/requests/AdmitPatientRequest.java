@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class AdmitPatientRequest {
-    private Long patientId;
+    private String patientId;
     private Long wardId;
     private int bedNumber;
     private String diagnosis;

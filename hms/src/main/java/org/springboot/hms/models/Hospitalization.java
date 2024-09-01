@@ -22,20 +22,20 @@ public class Hospitalization {
     @JoinColumn(name = "patient_id", nullable = false)
     private Patient patient;
 
-    @ManyToOne
-    @JoinColumn(name = "ward_id", nullable = false)
-    @JsonIgnore
-    private Ward ward;
+//    @ManyToOne
+//    @JoinColumn(name = "ward_id", nullable = false)
+//    @JsonIgnore
+//    private Ward ward;
 
     @Column(nullable = false)
     private int bedNumber;
 
     private String diagnosis;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
-    @JsonIgnore
-    private Doctor doctor;
+//    @ManyToOne
+//    @JoinColumn(name = "doctor_id", nullable = false)
+//    @JsonIgnore
+//    private Doctor doctor;
 
     @Column(nullable = false)
     private LocalDate admissionDate;

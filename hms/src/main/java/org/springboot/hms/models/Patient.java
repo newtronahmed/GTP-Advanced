@@ -16,8 +16,8 @@ import java.util.List;
 public class Patient {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private  String id;
 
     @Column(nullable = false)
     private String patientNumber;

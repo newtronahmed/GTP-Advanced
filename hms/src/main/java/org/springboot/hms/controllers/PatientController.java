@@ -1,6 +1,7 @@
 package org.springboot.hms.controllers;
 
 
+import org.springboot.hms.dto.PatientDTO;
 import org.springboot.hms.models.Patient;
 import org.springboot.hms.services.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,49 +18,37 @@ public class PatientController {
     private PatientService patientService;
 
     @GetMapping
-    public List<Patient> getAllPatients() {
+    public List<PatientDTO> getAllPatients() {
         return patientService.getAllPatients();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+    public ResponseEntity<PatientDTO> getPatientById(@PathVariable String id) {
         return patientService.getPatientById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public Patient createPatient(@RequestBody Patient patient) {
-        return patientService.savePatient(patient);
+    public Patient createPatient(@RequestBody PatientDTO patientDTO) {
+        return patientService.createPatient(patientDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable Long id, @RequestBody Patient patientDetails) {
-        return patientService.getPatientById(id)
-                .map(patient -> {
-                    patient.setPatientNumber(patientDetails.getPatientNumber());
-                    patient.setSurname(patientDetails.getSurname());
-                    patient.setFirstName(patientDetails.getFirstName());
-                    patient.setAddress(patientDetails.getAddress());
-                    patient.setPhoneNumber(patientDetails.getPhoneNumber());
-                    return ResponseEntity.ok(patientService.savePatient(patient));
-                })
+    public ResponseEntity<PatientDTO> updatePatient(@PathVariable String id, @RequestBody PatientDTO patientDTO) {
+        return patientService.updatePatient(id, patientDTO)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    @GetMapping("/by-ward-and-department")
-    public List<Patient> getPatientsByWardNumberAndDepartmentCode(
-            @RequestParam int wardNumber,
-            @RequestParam String departmentCode) {
-        return patientService.getPatientsByWardNumberAndDepartmentCode(wardNumber, departmentCode);
+    @GetMapping("/by-patient-number/{patientNumber}")
+    public ResponseEntity<PatientDTO> getPatientByPatientNumber(@PathVariable String patientNumber) {
+        return patientService.getPatientByPatientNumber(patientNumber)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
-
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePatient(@PathVariable Long id) {
-        return patientService.getPatientById(id)
-                .map(patient -> {
-                    patientService.deletePatient(id);
-                    return ResponseEntity.ok().<Void>build();
-                })
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Void> deletePatient(@PathVariable String id) {
+        boolean deleted = patientService.deletePatient(id);
+        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }
