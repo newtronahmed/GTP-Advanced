@@ -36,6 +36,7 @@ public class PatientService {
     }
 
     // Create a new patient from PatientDTO and generate an employee number
+    @CacheEvict(value = "patients", allEntries = true)
     public Patient createPatient(PatientDTO patientDTO) {
         Patient patient = new Patient();
         patient.setFirstName(patientDTO.getFirstName());
@@ -63,7 +64,7 @@ public class PatientService {
                 .map(this::convertToDTO);
     }
 
-        @CacheEvict(value = "patients", allEntries = true)
+    @CacheEvict(value = "patients", allEntries = true)
     public boolean deletePatient(String id) {
         if (patientRepository.existsById(id)) {
             patientRepository.deleteById(id);
