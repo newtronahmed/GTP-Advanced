@@ -1,4 +1,4 @@
-package org.springboot;
+package org.springboot.dayone;
 
 import java.util.*;
 import java.util.concurrent.*;
