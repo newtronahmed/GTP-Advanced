@@ -1,34 +1,47 @@
 package org.springboot.daythree.deadlock;
 
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class DeadlockSolution {
     static class Resource {
-        private final Lock lock = new ReentrantLock();
+        private final ReentrantLock lock = new ReentrantLock();
 
         public boolean tryAcquire(Resource other) {
+            boolean acquired = false;
             try {
+                // Try to acquire the lock on the current resource
                 if (lock.tryLock()) {
                     System.out.println(Thread.currentThread().getName() + " acquired " + this);
                     Thread.sleep(50); // Simulate some work
 
+                    // Try to acquire the lock on the other resource
                     if (other.lock.tryLock()) {
                         other.use();
-                        other.lock.unlock();
-                        return true;
+                        acquired = true;
                     }
                 }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt(); // Reset interrupt flag
+                System.err.println(Thread.currentThread().getName() + " was interrupted.");
             } finally {
-                lock.unlock();
+                // Release locks if they are held
+                if (acquired) {
+                    other.lock.unlock();
+                }
+                if (lock.isHeldByCurrentThread()) { // Correct usage with ReentrantLock
+                    lock.unlock();
+                }
             }
-            return false;
+            return acquired;
         }
 
         public void use() {
             System.out.println(Thread.currentThread().getName() + " is using " + this);
+        }
+
+        @Override
+        public String toString() {
+            return "Resource@" + Integer.toHexString(hashCode());
         }
     }
 
